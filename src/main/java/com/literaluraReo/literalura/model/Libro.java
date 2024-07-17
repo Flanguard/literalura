@@ -3,6 +3,8 @@ package com.literaluraReo.literalura.model;
 
 import jakarta.persistence.*;
 
+import java.util.Optional;
+
 @Entity
 @Table(name="libros")
 public class Libro {
@@ -16,9 +18,23 @@ public class Libro {
     @ManyToOne(cascade = CascadeType.PERSIST)
     private Author author;
     private String lenguaje;
-    private Integer numeroDeDesdargas;
+    private Integer numeroDeDescargas;
 
     public Libro(){}
+
+    public Libro(DatosDeLibro datosLibro) {
+        this.titulo = datosLibro.titulo();
+        Optional<DatosDeAutor> autor = datosLibro.autor().stream()
+                .findFirst();
+        if (autor.isPresent()) {
+            this.author = new Author(autor.get());
+        } else {
+            System.out.println("No se a encontrado el autor");
+        }
+
+        this.lenguaje = datosLibro.idioma().get(0);
+        this.numeroDeDescargas = datosLibro.numeroDeDescargas();
+    }
 
     public Long getId() {
         return id;
@@ -52,12 +68,12 @@ public class Libro {
         this.lenguaje = lenguaje;
     }
 
-    public Integer getNumeroDeDesdargas() {
-        return numeroDeDesdargas;
+    public Integer getNumeroDeDescargas() {
+        return numeroDeDescargas;
     }
 
-    public void setNumeroDeDesdargas(Integer numeroDeDesdargas) {
-        this.numeroDeDesdargas = numeroDeDesdargas;
+    public void setNumeroDeDescargas(Integer numeroDeDescargas) {
+        this.numeroDeDescargas = numeroDeDescargas;
     }
 
     @Override
@@ -66,6 +82,6 @@ public class Libro {
                 ", titulo='" + titulo + '\'' +
                 ", author=" + author.getNombre() +
                 ", lenguaje='" + lenguaje + '\'' +
-                ", numeroDeDesdargas=" + numeroDeDesdargas;
+                ", numeroDeDesdargas=" + numeroDeDescargas;
     }
 }
